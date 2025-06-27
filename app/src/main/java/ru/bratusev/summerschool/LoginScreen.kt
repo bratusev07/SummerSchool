@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -51,7 +52,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Sign In", style = MaterialTheme.typography.headlineMedium)
+        Text(stringResource(id = R.string.login_title), style = MaterialTheme.typography.headlineMedium)
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -60,7 +61,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             onValueChange = {
                 loginText.value = it
             },
-            label = { Text("Login") },
+            label = { Text(stringResource(id = R.string.login_login_field)) },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -71,7 +72,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             onValueChange = {
                 passwordText.value = it
             },
-            label = { Text("Password") },
+            label = { Text(stringResource(id = R.string.login_password_field)) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth()
@@ -89,13 +90,13 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
                         sharedPreferences
                     )
                 ) {
-                    Toast.makeText(context, "Some field is empty", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.login_empty_field_toast), Toast.LENGTH_SHORT).show()
                 } else {
                     navController.navigate(Screen.Home.route)
                 }
             }
         ) {
-            Text("Sign in")
+            Text(stringResource(id = R.string.login_signin_button))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -112,7 +113,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             )
 
             Text(
-                text = "Remember me",
+                text = stringResource(id = R.string.login_remember_me),
             )
         }
     }

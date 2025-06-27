@@ -17,4 +17,10 @@
     <string name="task_status_todo">К выполнению</string>
     <string name="task_status_in_progress">В процессе</string>
     <string name="task_status_done">Готово</string>
+    <string name="login_title">Вход</string>
+    <string name="login_login_field">Логин</string>
+    <string name="login_password_field">Пароль</string>
+    <string name="login_signin_button">Войти</string>
+    <string name="login_remember_me">Запомнить меня</string>
+    <string name="login_empty_field_toast">Какое-то поле пустое</string>
 </resources> 

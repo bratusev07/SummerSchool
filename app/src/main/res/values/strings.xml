@@ -16,4 +16,10 @@
     <string name="task_status_todo">To Do</string>
     <string name="task_status_in_progress">In Progress</string>
     <string name="task_status_done">Done</string>
+    <string name="login_title">Sign In</string>
+    <string name="login_login_field">Login</string>
+    <string name="login_password_field">Password</string>
+    <string name="login_signin_button">Sign in</string>
+    <string name="login_remember_me">Remember me</string>
+    <string name="login_empty_field_toast">Some field is empty</string>
 </resources>
