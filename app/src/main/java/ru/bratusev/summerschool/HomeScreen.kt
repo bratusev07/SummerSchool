@@ -87,11 +87,16 @@ fun getTaskStatusColor(status: String): Color {
 fun HomeScreen(modifier: Modifier = Modifier) {
     var tasks by remember { mutableStateOf(emptyList<Task>()) }
     val coroutineScope = rememberCoroutineScope()
-    var showAddTaskDialog by remember { mutableStateOf(false) }
     var selectedTask by remember { mutableStateOf<Task?>(null) }
+
+    // Состояние BottomSheet диалога (скрыт, расширен)
     val sheetState = rememberModalBottomSheetState()
+
+    // Флаги открытости диалога (поумолчанию false - диалог закрыт)
+    var showAddTaskDialog by remember { mutableStateOf(false) }
     var showTaskDetailsSheet by remember { mutableStateOf(false) }
     var showEditDialog by remember { mutableStateOf(false) }
+
     var editTitle by remember { mutableStateOf("") }
     var editDescription by remember { mutableStateOf("") }
 
@@ -126,6 +131,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             )
         },
         floatingActionButton = {
+            // showAddTaskDialog становится true при нажатии и отображется диалог с этим флагом
             FloatingActionButton(onClick = { showAddTaskDialog = true }) {
                 Icon(Icons.Filled.Add, contentDescription = stringResource(id = R.string.add_task))
             }
@@ -142,6 +148,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     task = task,
                     modifier = Modifier
                         .padding(vertical = 8.dp)
+                        // Устанавливаем выбранную задачу и открываем диалог при нажатии на неё
                         .clickable {
                             selectedTask = task
                             showTaskDetailsSheet = true
@@ -151,6 +158,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    // Проверка флага showAddTaskDialog для отображения диалога
     if (showAddTaskDialog) {
         AddTaskDialog(
             onDismiss = { showAddTaskDialog = false },
@@ -169,11 +177,18 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         )
     }
 
+    // Проверка флага showTaskDetailsSheet для отображения диалога
     if (showTaskDetailsSheet) {
+        // BottomSheet диалог отличается по реализации от AlertDialog.
+        // Ему необхожимо передавать sheetState для указания состояния
+        // Но он не ограничен в плане набора кнопок и своих размеров в отличии от Alert
         ModalBottomSheet(
+            // showTaskDetailsSheet = false для закрытия диалога (после изменения состояния проверка выше
+            // не пройдет и диалог не будет отображен
             onDismissRequest = { showTaskDetailsSheet = false },
             sheetState = sheetState
         ) {
+            // Если задача выбрана (не null), то заполняем содержимое диалога
             selectedTask?.let { task ->
                 TaskDetailsSheet(
                     task = task,
@@ -188,6 +203,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                     creationDate = task.creationDate
                                 )
                             )
+                            // showTaskDetailsSheet = false для закрытия диалога (после изменения состояния проверка выше
+                            // не пройдет и диалог не будет отображен
                             showTaskDetailsSheet = false
                         }
                     },
@@ -216,6 +233,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     }
 
+    // Проверка флага showEditDialog и наличия выбранной задачи для отображения диалога
     if (showEditDialog && selectedTask != null) {
         EditTaskDialog(
             initialTitle = editTitle,
@@ -242,6 +260,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     }
 }
 
+/** Диалог для добавления задачи в БД.
+ * В нашем примере он отображается при нажатии на floatingButton
+ *
+ * onDismiss - обработчик для закрытия диалога (отрицательного исхода)
+ * onTaskAdd - обработчик для добавления задачи (положительного исхода)
+ * */
 @Composable
 fun AddTaskDialog(
     onDismiss: () -> Unit,
@@ -250,6 +274,12 @@ fun AddTaskDialog(
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
+    // Диалог добавления задачи
+    // onDismissRequest - вызывается при необходимости закрытия диалога (например при нажатии вне диалога)
+    // title - заголовок диалога
+    // text - содержимое диалога, размещаемое под title (не обязательно текст)
+    // confirmButton - обработчик кнопки подтверждения (согласия/положительного исхода)
+    // dismissButton - обработчик кнопки отказа (отрицательного исхода)
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(id = R.string.add_new_task)) },
@@ -269,6 +299,8 @@ fun AddTaskDialog(
             }
         },
         confirmButton = {
+            // Как видно - это очень опционально и не обязательно на confirmButton
+            // завязывать положительную реакцию или делать это только кнопкой
             Button(onClick = { onTaskAdd(title, description) }) {
                 Text(stringResource(id = R.string.add))
             }
@@ -360,6 +392,10 @@ fun TaskDetailsSheet(
     }
 }
 
+
+/** Диалог для редактирования задачи в БД.
+ * Аналогичен AddTaskDialog
+ * */
 @Composable
 fun EditTaskDialog(
     initialTitle: String,
