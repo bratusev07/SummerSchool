@@ -29,14 +29,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.navigation.NavController
 
+
+/** Верстка для экрана входа */
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
+fun LoginScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val sharedPreferences =
         remember { context.getSharedPreferences("auth_data", Context.MODE_PRIVATE) }
 
+    // Значение отображаемое в соответствующем поле.
+    // Стандартное значение берется из sharedPreference по ключам.
     val loginText =
         rememberSaveable { mutableStateOf(sharedPreferences.getString("login", "") ?: "") }
     val passwordText =
@@ -45,6 +48,11 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
         rememberSaveable { mutableStateOf(sharedPreferences.getBoolean("remember_me", false)) }
 
 
+    // Вертикальный контейнер:
+    // fillMaxSize - занимает всё доступное место
+    // padding - отступ от всех краев экрана на 32
+    // verticalArrangement - выравнивение по вертикали (центр)
+    // horizontalAlignment - выравнивание по горизонтали (центр)
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -52,10 +60,17 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Заголовок
         Text(stringResource(id = R.string.login_title), style = MaterialTheme.typography.headlineMedium)
 
+        // Отступ высотой 32dp (можно реализовать и с использованием padding)
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Поле для ввода логина
+        // value - отображаемое значение (берется из переменной, объявленной ранее)
+        // onValueChange - что делать при изменении текста в поле
+        // label - подсказка для ввода
+        // fillMaxWidth - занимает максимум доступной ширины в рамках контейнера Column
         TextField(
             value = loginText.value,
             onValueChange = {
@@ -65,8 +80,16 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Отступ высотой 16dp (можно реализовать и с использованием padding)
         Spacer(modifier = Modifier.height(16.dp))
 
+        // Поле для ввода пароля
+        // value - отображаемое значение (берется из переменной, объявленной ранее)
+        // onValueChange - что делать при изменении текста в поле
+        // label - подсказка для ввода
+        // visualTransformation - скрытие пароля (замена символов на '*')
+        // keyboardOptions - смена клавиатуры (можно настроить свою клавиатуру, например только цифры)
+        // fillMaxWidth - занимает максимум доступной ширины в рамках контейнера Column
         TextField(
             value = passwordText.value,
             onValueChange = {
@@ -78,11 +101,14 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             modifier = Modifier.fillMaxWidth()
         )
 
+        // Отступ высотой 32dp (можно реализовать и с использованием padding)
         Spacer(modifier = Modifier.height(32.dp))
 
+        // Кнопка для запуска авторизации
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+                // если валидация пройдена, то вывести Toast (сообщение на экране устрйоства)
                 if (!executeLogin(
                         loginText.value,
                         passwordText.value,
@@ -92,33 +118,55 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
                 ) {
                     Toast.makeText(context, context.getString(R.string.login_empty_field_toast), Toast.LENGTH_SHORT).show()
                 } else {
-                    navController.navigate(Screen.Home.route)
+                    // TODO Навигация на домашний экран
                 }
             }
         ) {
             Text(stringResource(id = R.string.login_signin_button))
         }
 
+        // Отступ высотой 16dp (можно реализовать и с использованием padding)
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = isChecked.value,
-                onCheckedChange = {
-                    isChecked.value = it
-                }
-            )
-
-            Text(
-                text = stringResource(id = R.string.login_remember_me),
-            )
+        // Кастомная компонента для checkBox
+        RememberMe(isChecked.value) {
+            isChecked.value = it
         }
     }
 }
 
+/** Кастомная компонента чекбокса, вынесенная в отдельную функцию
+ * isChecked - отображает или скрывает галочку если true и false соответственн
+ * onCheckChanged - функция, принимающая новое значение для isChecked
+ * */
+@Composable
+fun RememberMe(isChecked: Boolean, onCheckChanged: (Boolean) -> Unit) {
+    // Горизонтальный контейнер
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = isChecked,
+            onCheckedChange = {
+                onCheckChanged(it)
+            }
+        )
+
+        Text(
+            text = stringResource(id = R.string.login_remember_me),
+        )
+    }
+}
+
+
+/** Валидация данных для входа
+ *
+ * Возвращаемые значения:
+ *   true - валидация пройдена
+ *   false - валидация не пройдена
+ *
+ * */
 private fun executeLogin(
     login: String,
     password: String,
@@ -134,6 +182,15 @@ private fun executeLogin(
         true
     } else false
 
+
+/** Сохранение в SharedPreference данных для входа
+ *
+ * Ключи и соответсвующие им значения:
+ * login - введеный логин
+ * password - введеный пароль
+ * remember_me - флаг, отвечающий за необходимость сохранения
+ *
+ * */
 private fun saveAuthData(login: String, password: String, sharedPreferences: SharedPreferences) {
     sharedPreferences.edit {
         putString("login", login)
