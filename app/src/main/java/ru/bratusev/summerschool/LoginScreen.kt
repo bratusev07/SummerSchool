@@ -37,6 +37,10 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
     val sharedPreferences =
         remember { context.getSharedPreferences("auth_data", Context.MODE_PRIVATE) }
 
+    // Используем rememberSaveable для сохранения состояния между сессиями приложения
+    // (например, при повороте экрана или перезапуске активити)
+    // mutableStateOf создает изменяемое состояние для Jetpack Compose,
+    // которое будет отслеживаться и обновляться в интерфейсе
     val loginText =
         rememberSaveable { mutableStateOf(sharedPreferences.getString("login", "") ?: "") }
     val passwordText =
@@ -92,6 +96,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
                 ) {
                     Toast.makeText(context, context.getString(R.string.login_empty_field_toast), Toast.LENGTH_SHORT).show()
                 } else {
+                    // Навигация на домашний экран
                     navController.navigate(Screen.Home.route)
                 }
             }
