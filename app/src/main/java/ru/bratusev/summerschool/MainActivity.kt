@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // Создание объекта базы данных
         database = AppDatabase.getDatabase(applicationContext)
         setContent {
             SummerSchoolTheme {
