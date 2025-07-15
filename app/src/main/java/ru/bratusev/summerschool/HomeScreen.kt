@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -46,19 +45,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import kotlinx.coroutines.launch
 import ru.bratusev.summerschool.MainActivity.Companion.database
 import ru.bratusev.summerschool.data.TaskEntity
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import androidx.compose.runtime.rememberUpdatedState
 import ru.bratusev.summerschool.ui.theme.StatusDone
 import ru.bratusev.summerschool.ui.theme.StatusInProgress
 import ru.bratusev.summerschool.ui.theme.StatusTodo
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun getLocalizedStatus(status: String): String {
@@ -94,6 +95,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var showEditDialog by remember { mutableStateOf(false) }
     var editTitle by remember { mutableStateOf("") }
     var editDescription by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         database.taskDao().getAllItems().collect { dbTasks ->
@@ -164,6 +166,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     )
                     database.taskDao().insertItem(newTask)
                     showAddTaskDialog = false
+
+                    val workRequest = OneTimeWorkRequestBuilder<NotifyTaskCreatedWorker>()
+                        .build()
+                    WorkManager.getInstance(context = context)
+                        .enqueue(workRequest)
                 }
             }
         )
