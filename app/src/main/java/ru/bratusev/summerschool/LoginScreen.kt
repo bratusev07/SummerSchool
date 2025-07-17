@@ -2,7 +2,9 @@ package ru.bratusev.summerschool
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,9 +29,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import ru.bratusev.summerschool.ui.theme.SummerSchoolTheme
 
 @Composable
 fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
@@ -52,11 +57,16 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(32.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(stringResource(id = R.string.login_title), style = MaterialTheme.typography.headlineMedium)
+        Text(
+            stringResource(id = R.string.login_title),
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -94,7 +104,11 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
                         sharedPreferences
                     )
                 ) {
-                    Toast.makeText(context, context.getString(R.string.login_empty_field_toast), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.login_empty_field_toast),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 } else {
                     // Навигация на домашний экран
                     navController.navigate(Screen.Home.route)
@@ -118,6 +132,7 @@ fun LoginScreen(modifier: Modifier = Modifier, navController: NavController) {
             )
 
             Text(
+                color = MaterialTheme.colorScheme.onBackground,
                 text = stringResource(id = R.string.login_remember_me),
             )
         }
@@ -144,5 +159,31 @@ private fun saveAuthData(login: String, password: String, sharedPreferences: Sha
         putString("login", login)
         putString("password", password)
         putBoolean("remember_me", true)
+    }
+}
+
+@Preview(
+    name = "Dark",
+    group = "LoginScreen",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun LoginScreenPreviewDark() {
+    SummerSchoolTheme {
+        LoginScreen(modifier = Modifier, navController = rememberNavController())
+    }
+}
+
+@Preview(
+    name = "Light",
+    group = "LoginScreen",
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_NO
+)
+@Composable
+fun LoginScreenPreviewLight() {
+    SummerSchoolTheme {
+        LoginScreen(modifier = Modifier, navController = rememberNavController())
     }
 }

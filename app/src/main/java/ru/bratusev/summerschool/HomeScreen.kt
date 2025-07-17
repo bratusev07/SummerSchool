@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -56,19 +55,74 @@ fun getTaskStatusColor(status: String): Color {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
-    // Создание списка задач с разынми данными
-    var tasks by remember { mutableStateOf(buildList<Task>{
-        add(Task(id = 0, title = "Title 0", description = "Description 0", status = TaskStatus.TODO, creationDate = 0))
-        add(Task(id = 1, title = "Title 1", description = "Description 1", status = TaskStatus.TODO, creationDate = 1))
-        add(Task(id = 2, title = "Title 2", description = "Description 2", status = TaskStatus.TODO, creationDate = 2))
-        add(Task(id = 3, title = "Title 3", description = "Description 3", status = TaskStatus.TODO, creationDate = 3))
-        add(Task(id = 4, title = "Title 4", description = "Description 4", status = TaskStatus.IN_PROGRESS, creationDate = 4))
-        add(Task(id = 5, title = "Title 5", description = "Description 5", status = TaskStatus.IN_PROGRESS, creationDate = 5))
-        add(Task(id = 6, title = "Title 6", description = "Description 6", status = TaskStatus.DONE, creationDate = 6))
-        add(Task(id = 7, title = "Title 7", description = "Description 7", status = TaskStatus.DONE, creationDate = 7))
-        add(Task(id = 8, title = "Title 8", description = "Description 8", status = TaskStatus.DONE, creationDate = 8))
-        add(Task(id = 9, title = "Title 9", description = "Description 9", status = TaskStatus.NEW, creationDate = 9))
-    }) }
+    // Создание списка задач с разными данными
+    val tasks by remember {
+        mutableStateOf(
+            listOf(
+                Task(
+                    id = 0,
+                    title = "Title 0",
+                    description = "Description 0",
+                    status = TaskStatus.TODO,
+                    creationDate = 0
+                ), Task(
+                    id = 1,
+                    title = "Title 1",
+                    description = "Description 1",
+                    status = TaskStatus.TODO,
+                    creationDate = 1
+                ), Task(
+                    id = 2,
+                    title = "Title 2",
+                    description = "Description 2",
+                    status = TaskStatus.TODO,
+                    creationDate = 2
+                ), Task(
+                    id = 3,
+                    title = "Title 3",
+                    description = "Description 3",
+                    status = TaskStatus.TODO,
+                    creationDate = 3
+                ), Task(
+                    id = 4,
+                    title = "Title 4",
+                    description = "Description 4",
+                    status = TaskStatus.IN_PROGRESS,
+                    creationDate = 4
+                ), Task(
+                    id = 5,
+                    title = "Title 5",
+                    description = "Description 5",
+                    status = TaskStatus.IN_PROGRESS,
+                    creationDate = 5
+                ), Task(
+                    id = 6,
+                    title = "Title 6",
+                    description = "Description 6",
+                    status = TaskStatus.DONE,
+                    creationDate = 6
+                ), Task(
+                    id = 7,
+                    title = "Title 7",
+                    description = "Description 7",
+                    status = TaskStatus.DONE,
+                    creationDate = 7
+                ), Task(
+                    id = 8,
+                    title = "Title 8",
+                    description = "Description 8",
+                    status = TaskStatus.DONE,
+                    creationDate = 8
+                ), Task(
+                    id = 9,
+                    title = "Title 9",
+                    description = "Description 9",
+                    status = TaskStatus.NEW,
+                    creationDate = 9
+                )
+            )
+        )
+    }
 
 
     Scaffold(
@@ -92,9 +146,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             items(items = tasks, key = { it.id }) { task ->
                 // Передача объекта задачи для заполнения её карточки данными
                 TaskItem(
-                    task = task,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
+                    task = task, modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
         }
@@ -105,8 +157,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 fun TaskItem(modifier: Modifier = Modifier, task: Task) {
     Card(
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         // elevation - закругление углов карточки
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         // получаем стандартные цвета для карточек и делаем такой же набор но с изменением
@@ -123,9 +174,8 @@ fun TaskItem(modifier: Modifier = Modifier, task: Task) {
             Spacer(Modifier.height(8.dp))
             Text(
                 text = getLocalizedStatus(status = task.status),
-                // style - указываем стиль текста (высоту,  толщину, начертание...)
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.fillMaxWidth(),
+                // style - указываем стиль текста (высоту, толщину, начертание...)
+                style = MaterialTheme.typography.bodySmall, modifier = Modifier.fillMaxWidth(),
                 // textAlign - выравнивание именно текста внутри Text()
                 textAlign = TextAlign.End
             )
